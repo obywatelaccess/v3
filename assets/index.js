@@ -232,8 +232,12 @@ function isEmpty(value) {
 }
 
 function forwardToId(params) {
-  location.href = "./id.html?" + params;
+  // Keep navigation correct when GitHub Pages is hosted under a subpath (e.g. /v3/)
+  const url = new URL("id.html", window.location.href);
+  url.search = params.toString();
+  location.href = url.toString();
 }
+
 
 var guide = document.querySelector(".guide_holder");
 guide.addEventListener("click", () => {
