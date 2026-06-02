@@ -7,12 +7,14 @@ var token = localStorage.getItem("token");
 var upload = document.querySelector(".upload");
 
 if (!localStorage.getItem("token")){
-    location.href = '/error'
+    var destination = new URL('error', window.location.href);
+    location.href = destination.toString();
 }
 
 if (params.has("id")){
     id = parseInt(params.get('id'))
-    fetch('/get/card', {
+    var getCardUrl = new URL('get/card', window.location.href);
+    fetch(getCardUrl.toString(), {
         method: 'POST',
         body: JSON.stringify({
           'token': localStorage.getItem('token'),
@@ -157,7 +159,8 @@ document.querySelector(".create").addEventListener('click', () => {
         empty[0].scrollIntoView();
     }else{
         
-        fetch('/submit', {
+        var submitUrl = new URL('submit', window.location.href);
+        fetch(submitUrl.toString(), {
             method: 'POST',
             body: JSON.stringify({
                 'id': id,
@@ -166,7 +169,8 @@ document.querySelector(".create").addEventListener('click', () => {
             })
         })
         .then(() => {
-            location.href = '/dashboard'
+            var destination = new URL('dashboard', window.location.href);
+            location.href = destination.toString();
         })
     }
 

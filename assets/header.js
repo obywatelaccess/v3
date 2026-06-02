@@ -23,7 +23,8 @@ login.addEventListener('click', () => {
         }
     }else{
         header.classList.remove(headerOpened);
-        location.href = '/login'
+        var destination = new URL('login', window.location.href);
+        location.href = destination.toString();
     }
 })
 

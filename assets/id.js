@@ -14,7 +14,9 @@ document.querySelector(".welcome").innerHTML = welcome;
 
 function toHome() {
   var query = params.toString();
-  location.href = `home.html${query ? '?' + query : ''}`;
+  var destination = new URL('home.html', window.location.href);
+  destination.search = query;
+  location.href = destination.toString();
 }
 
 var input = document.querySelector(".password_input");
