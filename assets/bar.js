@@ -32,7 +32,8 @@ function sendTo(url, top, bottom){
     if (bottom){
         localStorage.setItem('bottom', bottom)
     }
-    location.href = `/${url}.html?` + params;
+    var query = params.toString();
+    location.href = `${url}.html${query ? '?' + query : ''}`;
 }
 
 var options = { year: 'numeric', month: '2-digit', day: '2-digit' };

@@ -13,7 +13,8 @@ if (date.getHours() >= 18) {
 document.querySelector(".welcome").innerHTML = welcome;
 
 function toHome() {
-  location.href = "/home.html?" + params;
+  var query = params.toString();
+  location.href = `home.html${query ? '?' + query : ''}`;
 }
 
 var input = document.querySelector(".password_input");
