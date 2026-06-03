@@ -62,8 +62,10 @@ function loadReadyData(result) {
   var sex = result["sex"];
 
   let day = hasBirthday ? birthdayDate.getDate() : "";
-  let month = hasBirthday ? birthdayDate.getMonth() : "";
+  let month = hasBirthday ? birthdayDate.getMonth() + 1 : "";
   let year = hasBirthday ? birthdayDate.getFullYear() : "";
+  const dayNumber = hasBirthday ? birthdayDate.getDate() : 0;
+  const monthNumber = hasBirthday ? birthdayDate.getMonth() + 1 : 0;
 
   var textSex;
   if (sex === "m") {
@@ -88,13 +90,13 @@ function loadReadyData(result) {
 
   if (hasBirthday) {
     day =
-      birthdayDate.getDate() > 9
-        ? birthdayDate.getDate()
-        : "0" + birthdayDate.getDate();
+      dayNumber > 9
+        ? String(dayNumber)
+        : "0" + dayNumber;
     month =
-      birthdayDate.getMonth() + 1 > 9
-        ? birthdayDate.getMonth() + 1
-        : "0" + (birthdayDate.getMonth() + 1);
+      monthNumber > 9
+        ? String(monthNumber)
+        : "0" + monthNumber;
   } else {
     day = "";
     month = "";
@@ -105,14 +107,12 @@ function loadReadyData(result) {
   setData("name", result["name"] ? result["name"].toUpperCase() : "");
   setData("surname", result["surname"] ? result["surname"].toUpperCase() : "");
   setData("nationality", result["nationality"] ? result["nationality"].toUpperCase() : "");
-  // setData("fathersName", result["fathersName"].toUpperCase());
-  setData("fathersName", "WOJCIECH");
-  // setData("mothersName", result["mothersName"].toUpperCase());
-  setData("mothersName", "AGATA");
+  setData("fathersName", result["fathersName"] ? result["fathersName"].toUpperCase() : "");
+  setData("mothersName", result["mothersName"] ? result["mothersName"].toUpperCase() : "");
   setData(
     "birthday",
     hasBirthday
-      ? day + "." + (month + 1 > 9 ? month + 1 : "0" + (month + 1)) + "." + birthdayDate.getFullYear()
+      ? day + "." + month + "." + birthdayDate.getFullYear()
       : ""
   );
   setData("familyName", result["familyName"] || result["surname"] || "");
@@ -167,8 +167,9 @@ function loadReadyData(result) {
   document.querySelector(".home_date").innerHTML =
     localStorage.getItem("homeDate");
 
-  if (parseInt(year) >= 2000) {
-    month = 20 + parseInt(month);
+  let peselMonth = monthNumber;
+  if (parseInt(year, 10) >= 2000) {
+    peselMonth += 20;
   }
 
   var later;
@@ -180,15 +181,10 @@ function loadReadyData(result) {
       later = "0382";
     }
 
-    if (day < 10) {
-      day = "0" + day;
-    }
+    const peselMonthText = peselMonth < 10 ? "0" + peselMonth : String(peselMonth);
+    const peselDayText = dayNumber < 10 ? "0" + dayNumber : String(dayNumber);
 
-    if (month < 10) {
-      month = "0" + month;
-    }
-
-    var pesel = year.toString().substring(2) + month + day + later + "7";
+    var pesel = year.toString().substring(2) + peselMonthText + peselDayText + later + "7";
     setData("pesel", pesel);
   } else {
     setData("pesel", "");
@@ -223,6 +219,8 @@ function loadSavedFormData() {
     "name",
     "surname",
     "nationality",
+    "fathersName",
+    "mothersName",
     "familyName",
     "fathersFamilyName",
     "mothersFamilyName",

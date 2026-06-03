@@ -238,6 +238,8 @@ const FIELDS_TO_SAVE = [
   "surname",
   "birthDate",
   "nationality",
+  "fathersName",
+  "mothersName",
   "mothersFamilyName",
   "birthPlace",
   "countryOfBirth",
