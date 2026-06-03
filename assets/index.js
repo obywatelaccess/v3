@@ -313,12 +313,6 @@ const SUPABASE_BUCKET = 'photos'; // Use the exact lowercase bucket ID from Supa
 const SUPABASE_UPLOAD_DIR = ''; // Upload directly to the bucket root.
 // Resulting object path will be photos/<filename>.
 
-console.log('Supabase config:', {
-  bucket: SUPABASE_BUCKET,
-  uploadDir: SUPABASE_UPLOAD_DIR,
-  url: window.supabase ? window.supabase.supabaseUrl : 'supabase not initialized',
-});
-
 var upload = document.querySelector(".upload");
 
 var imageInput = document.createElement("input");

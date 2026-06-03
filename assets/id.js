@@ -51,11 +51,10 @@ input.addEventListener("input", () => {
         input.value = value.substring(0, value.length - 1) + dot;
       }
     });
-    console.log(original);
   }
 });
 
-function delay(time, length) {
+function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 

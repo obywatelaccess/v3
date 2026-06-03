@@ -1,5 +1,3 @@
-var confirmElement = document.querySelector(".confirm");
-
 var time = document.getElementById("time");
 
 if (localStorage.getItem("update") == null) {
@@ -280,7 +278,6 @@ async function loadImage() {
     return;
   }
 
-  console.log(paramImage);
   fetch(paramImage, {
     method: "GET",
     headers: {
@@ -375,7 +372,6 @@ function saveData(db, data) {
   return new Promise((resolve, reject) => {
     var store = getStore(db);
 
-    console.log(data);
     var request = store.put(data);
 
     request.onsuccess = () => {
