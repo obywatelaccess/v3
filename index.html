@@ -72,19 +72,32 @@
     </div>
 
     <div class="date">
-        <p class="top_info">Data urodzenia minimalnie miesiąc od teraz</p>
+        <p class="top_info">Data urodzenia (18+)</p>
         <div class="date_grid">
-            <input class="date_input" id="day" placeholder="DD" type="number">
-    
-            </input>
-            <input class="date_input" id="month" placeholder="MM" type="number">
-    
-            </input>
-            <input class="date_input" id="year" placeholder="YYYY" type="number">
-    
-            </input>
+            <input type="text" class="date_input" id="birthDate" aria-label="Data urodzenia" placeholder="Wybierz date" readonly>
+            <div class="date_picker" aria-label="Wybierz date urodzenia">
+                <div class="date_picker_tables">
+                    <div class="date_picker_group">
+                        <p class="date_picker_title">Dzien</p>
+                        <div class="date_picker_table day_table"></div>
+                    </div>
+                    <div class="date_picker_group">
+                        <p class="date_picker_title">Miesiac</p>
+                        <div class="date_picker_table month_table"></div>
+                    </div>
+                    <div class="date_picker_group">
+                        <p class="date_picker_title">Rok</p>
+                        <div class="date_picker_table year_table"></div>
+                    </div>
+                </div>
+                <div class="date_picker_actions">
+                    <button type="button" class="date_button cancel_date">Cancel</button>
+                    <button type="button" class="date_button save_date">Save</button>
+                </div>
+            </div>
         </div>
-        <p class="error">Wprowadź prawidłową datę</p>
+        <p class="date_ok">Data jest prawidlowa</p>
+        <p class="error">Invalid date - musisz miec 18 lat</p>
     </div>
 
     <div class="input_holder">

@@ -7,13 +7,226 @@ selector.addEventListener("click", () => {
   }
 });
 
-document.querySelectorAll(".date_input").forEach((element) => {
-  element.addEventListener("click", () => {
-    document.querySelector(".date").classList.remove("error_shown");
+const dateHolder = document.querySelector(".date");
+const birthDateInput = document.getElementById("birthDate");
+const datePicker = document.querySelector(".date_picker");
+const dayTable = document.querySelector(".day_table");
+const monthTable = document.querySelector(".month_table");
+const yearTable = document.querySelector(".year_table");
+const saveDateButton = document.querySelector(".save_date");
+const cancelDateButton = document.querySelector(".cancel_date");
+let pendingDate = createDateParts(getMinAllowedBirthDate());
+
+if (birthDateInput) {
+  birthDateInput.addEventListener("click", openDatePicker);
+  birthDateInput.addEventListener("focus", openDatePicker);
+}
+
+if (datePicker) {
+  datePicker.addEventListener("click", (event) => {
+    event.stopPropagation();
   });
-  element.addEventListener("input", () => {
-    saveField(element.id, element.value);
+}
+
+if (saveDateButton) {
+  saveDateButton.addEventListener("click", () => {
+    setBirthDateValue(formatDateParts(pendingDate));
+    saveField("birthDate", getBirthDateValue());
+    validateBirthDate(true);
+    closeDatePicker();
   });
+}
+
+if (cancelDateButton) {
+  cancelDateButton.addEventListener("click", () => {
+    syncPendingDateFromValue();
+    closeDatePicker();
+  });
+}
+
+document.addEventListener("click", (event) => {
+  if (!dateHolder || !dateHolder.contains(event.target)) {
+    closeDatePicker();
+  }
+});
+
+function openDatePicker() {
+  if (!dateHolder) return;
+  dateHolder.classList.add("date_picker_open");
+  syncPendingDateFromValue();
+  renderDatePicker();
+}
+
+function closeDatePicker() {
+  if (!dateHolder) return;
+  dateHolder.classList.remove("date_picker_open");
+}
+
+function getMinAllowedBirthDate() {
+  const now = new Date();
+  const min = new Date(now);
+  min.setFullYear(min.getFullYear() - 18);
+  return min;
+}
+
+function createDateParts(date) {
+  return {
+    day: date.getDate(),
+    month: date.getMonth() + 1,
+    year: date.getFullYear()
+  };
+}
+
+function getBirthDateValue() {
+  if (!birthDateInput) return "";
+  return birthDateInput.dataset.value || "";
+}
+
+function setBirthDateValue(value) {
+  if (!birthDateInput) return;
+  birthDateInput.dataset.value = value;
+  birthDateInput.value = formatDateForDisplay(value);
+}
+
+function formatDateParts(parts) {
+  const year = String(parts.year);
+  const month = String(parts.month).padStart(2, "0");
+  const day = String(parts.day).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateForDisplay(value) {
+  const parsedDate = parseInputDate(value);
+  if (!parsedDate) return "";
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const year = parsedDate.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
+function parseInputDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return date;
+}
+
+function validateBirthDate(showEmptyError = false) {
+  if (!birthDateInput || !dateHolder) return false;
+
+  const selectedDate = parseInputDate(getBirthDateValue());
+  const isValid = selectedDate && selectedDate <= getMinAllowedBirthDate();
+
+  dateHolder.classList.toggle("date_valid", Boolean(isValid));
+  dateHolder.classList.toggle("error_shown", Boolean(!isValid && (getBirthDateValue() || showEmptyError)));
+
+  return Boolean(isValid);
+}
+
+function syncPendingDateFromValue() {
+  const selectedDate = parseInputDate(getBirthDateValue());
+  pendingDate = createDateParts(selectedDate || getMinAllowedBirthDate());
+}
+
+function updatePendingDate(part, value) {
+  pendingDate[part] = value;
+  clampPendingDate();
+  renderDatePicker();
+}
+
+function clampPendingDate() {
+  const daysInMonth = new Date(pendingDate.year, pendingDate.month, 0).getDate();
+  if (pendingDate.day > daysInMonth) {
+    pendingDate.day = daysInMonth;
+  }
+}
+
+function renderDatePicker() {
+  renderPickerTable(dayTable, getDayOptions(), "day");
+  renderPickerTable(monthTable, getMonthOptions(), "month");
+  renderPickerTable(yearTable, getYearOptions(), "year");
+}
+
+function renderPickerTable(table, options, part) {
+  if (!table) return;
+  table.innerHTML = "";
+
+  options.forEach((option) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "date_pick_option";
+    button.textContent = option.label;
+    button.setAttribute("aria-label", option.ariaLabel || option.label);
+
+    if (option.value === pendingDate[part]) {
+      button.classList.add("selected");
+    }
+
+    button.addEventListener("click", () => {
+      updatePendingDate(part, option.value);
+    });
+
+    table.appendChild(button);
+  });
+}
+
+function getDayOptions() {
+  const daysInMonth = new Date(pendingDate.year, pendingDate.month, 0).getDate();
+  const days = [];
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    days.push({
+      value: day,
+      label: String(day).padStart(2, "0")
+    });
+  }
+
+  return days;
+}
+
+function getMonthOptions() {
+  const months = [];
+
+  for (let month = 1; month <= 12; month++) {
+    months.push({
+      value: month,
+      label: String(month).padStart(2, "0"),
+      ariaLabel: `Miesiac ${month}`
+    });
+  }
+
+  return months;
+}
+
+function getYearOptions() {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+
+  for (let year = currentYear; year >= currentYear - 120; year--) {
+    years.push({
+      value: year,
+      label: String(year)
+    });
+  }
+
+  return years;
+}
+
+// Restore saved form data, then validate the remembered date state.
+document.addEventListener("DOMContentLoaded", () => {
+  restoreForm();
+  syncPendingDateFromValue();
+  renderDatePicker();
+  validateBirthDate();
 });
 
 var sex = "m";
@@ -23,9 +236,7 @@ const SEX_STORAGE_KEY = "mobywatel_sex";
 const FIELDS_TO_SAVE = [
   "name",
   "surname",
-  "day",
-  "month",
-  "year",
+  "birthDate",
   "nationality",
   "mothersFamilyName",
   "birthPlace",
@@ -65,7 +276,11 @@ function restoreForm() {
     if (!input) return;
     const storedValue = localStorage.getItem(FORM_STORAGE_PREFIX + id);
     if (storedValue !== null) {
-      input.value = storedValue;
+      if (id === "birthDate") {
+        setBirthDateValue(storedValue);
+      } else {
+        input.value = storedValue;
+      }
     }
   });
 
@@ -83,8 +298,6 @@ function restoreForm() {
     restoreImage(savedImage);
   }
 }
-
-document.addEventListener("DOMContentLoaded", restoreForm);
 
 document.querySelectorAll(".selector_option").forEach((option) => {
   option.addEventListener("click", () => {
@@ -189,18 +402,16 @@ document.querySelector(".go").addEventListener("click", () => {
     params.set("image", upload.getAttribute("selected"));
   }
 
-  let dateEmpty = false;
-  const day = document.getElementById("day");
-  const month = document.getElementById("month");
-  const year = document.getElementById("year");
-
-  [day, month, year].forEach((input) => {
-    if (isEmpty(input.value)) {
-      dateEmpty = true;
-    } else {
-      params.set(input.id, input.value);
-    }
-  });
+  const dateValid = validateBirthDate(true);
+  if (dateValid) {
+    const [yearValue, monthValue, dayValue] = getBirthDateValue().split("-");
+    params.set("day", String(parseInt(dayValue, 10)));
+    params.set("month", String(parseInt(monthValue, 10)));
+    params.set("year", yearValue);
+    params.set("birthDate", getBirthDateValue());
+  } else {
+    empty.push(dateHolder);
+  }
 
   document.querySelectorAll(".input_holder").forEach((element) => {
     var input = element.querySelector(".input");

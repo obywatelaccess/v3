@@ -105,14 +105,13 @@ html{
 }
 
 .date_grid{
-    height: 45px;
+    height: max-content;
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    display: grid;
-    grid-gap: 5%;
-    grid-template-columns: repeat(3, calc(100%/3 - 10%/3));
+    display: block;
     margin-bottom: 30px;
+    position: relative;
 }
 
 input::-webkit-outer-spin-button,
@@ -193,7 +192,27 @@ input::-webkit-inner-spin-button {
 
 .date .error{
     margin-left: 5%;
-    margin-top: 50px;
+    margin-top: 5px;
+    position: static;
+    display: block;
+    height: 0;
+    overflow: hidden;
+}
+
+.date.error_shown .error{
+    height: 22px;
+}
+
+.date_ok{
+    color: rgb(28, 139, 73);
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 5%;
+    margin-top: 5px;
+    opacity: 0;
+    transition: 200ms;
+    height: 0;
+    overflow: hidden;
 }
 
 .selector_open{
@@ -230,21 +249,166 @@ input::-webkit-inner-spin-button {
 }
 
 .date_input{
-    height: 100%;
+    height: 45px;
     width: 100%;
-    text-align: center;
     border-radius: 10px;
     border: 2px solid rgb(138, 138, 138);
     font-weight: bold;
-    text-align: center;
     font-size: 15px;
-    color: rgb(138, 138, 138);
+    color: var(--main-color);
+    background-color: white;
+    box-sizing: border-box;
+    padding: 0 14px;
+    outline: none;
+    transition: 200ms;
+    color-scheme: light;
+    cursor: pointer;
 }
 
 .date_input::placeholder{
     font-weight: bold;
     text-align: center;
     color: rgb(138, 138, 138);
+}
+
+.date_input:focus{
+    border-color: var(--main-color);
+}
+
+.date_input::-webkit-calendar-picker-indicator{
+    display: none;
+}
+
+.date.error_shown .date_input{
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.date.date_valid .date_input{
+    border-color: rgb(28, 139, 73);
+}
+
+.date.date_valid .date_ok{
+    opacity: 1;
+    height: 22px;
+}
+
+.date_picker{
+    display: none;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+    padding: 12px;
+    border: 2px solid rgb(138, 138, 138);
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 20px rgb(153, 153, 153);
+}
+
+.date_picker_open .date_picker{
+    display: block;
+}
+
+.date_picker_tables{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.date_picker_group{
+    min-width: 0;
+}
+
+.date_picker_title{
+    color: var(--main-color);
+    opacity: 0.5;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+}
+
+.date_picker_table{
+    display: grid;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.day_table{
+    grid-template-columns: repeat(4, minmax(34px, 1fr));
+}
+
+.month_table{
+    grid-template-columns: repeat(3, minmax(34px, 1fr));
+}
+
+.year_table{
+    grid-template-columns: repeat(2, minmax(50px, 1fr));
+}
+
+.date_pick_option{
+    height: 36px;
+    border: 2px solid rgb(216, 216, 216);
+    border-radius: 8px;
+    background-color: white;
+    color: var(--main-color);
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.date_pick_option:hover{
+    border-color: var(--main-color);
+}
+
+.date_pick_option.selected{
+    border-color: var(--main-color);
+    background-color: var(--main-color);
+    color: white;
+}
+
+.date_picker_actions{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.date_button{
+    height: 42px;
+    border-radius: 10px;
+    border: 2px solid var(--main-color);
+    background-color: white;
+    color: var(--main-color);
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.date_button:hover{
+    opacity: 0.5;
+}
+
+.save_date{
+    background-color: var(--main-color);
+    color: white;
+}
+
+@media (max-width: 620px){
+    .date_picker_tables{
+        grid-template-columns: 1fr;
+    }
+
+    .date_picker_table{
+        max-height: 170px;
+    }
+
+    .year_table{
+        grid-template-columns: repeat(3, minmax(50px, 1fr));
+    }
 }
 
 .arrow{
